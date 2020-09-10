@@ -34,12 +34,12 @@
               </span>
             </section>
             <section class="c-attr-mt">
-              <a href="#" title="立即观看" class="comm-btn c-btn-3">立即观看</a>
+              <a @click="createOrders()" href="#" title="立即购买" class="comm-btn c-btn-3">立即购买</a>
             </section>
           </section>
         </aside>
         <aside class="thr-attr-box">
-          <ol class="thr-attr-ol clearfix">
+          <ol class="thr-attr-ol">
             <li>
               <p>&nbsp;</p>
               <aside>
@@ -113,7 +113,7 @@
                                   <em class="lh-menu-i-2 icon16 mr5">&nbsp;</em>{{video.title}}
                                 </a>
                               </li>
-
+                              
                             </ol>
 
                           </li>
@@ -162,15 +162,28 @@
 
 <script>
 import courseApi from '@/api/course'
+import ordersApi from '@/api/orders'
 export default {
    asyncData({ params, error }) {
      return courseApi.getCourseInfo(params.id)
         .then(response => {
           return {
             courseWebVo: response.data.data.courseWebVo,
-            chapterVideoList: response.data.data.chapterVideoList
+            chapterVideoList: response.data.data.chapterVideoList,
+            courseId:params.id
           }
         })
+   },
+   methods:{
+     //生成订单
+     createOrders() {
+       ordersApi.createOrders(this.courseId)
+        .then(response => {
+          //获取返回订单号
+          //生成订单之后，跳转订单显示页面
+          this.$router.push({path:'/orders/'+response.data.data.orderId})
+        })
+     }
    }
 };
 </script>
